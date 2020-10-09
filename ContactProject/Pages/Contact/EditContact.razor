@@ -1,0 +1,50 @@
+﻿@page "/contacts/edit/{ContactId:guid}"
+
+@inject CustomHttpClient client
+@inject NavigationManager NavigationManager
+@inject AppSettingsService AppSettingsService
+@inject IJSRuntime js
+
+<h3>Edit Contact</h3>
+<hr />
+<div class="center-it">
+    <Form ButtonText="Save" contact="@contact"
+          OnValidSubmit="@UpdateContact" Cancel="@Cancel" ShowDelete="true" Delete="@DeleteContact"/>
+</div>
+
+@code {
+    [Parameter] public Guid ContactId { get; set; }
+    string baseUrl;
+    Contact contact = new Contact();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        baseUrl = AppSettingsService.GetBaseUrl();
+        contact = await client.GetJsonAsync<Contact>(baseUrl + "/api/contacts/" + ContactId);
+    }
+
+    async Task UpdateContact()
+    {
+        await client.PutJsonAsync(baseUrl + "/api/contacts/" + ContactId, contact);
+        NavigationManager.NavigateTo("contacts");
+    }
+
+    async Task DeleteContact()
+    {
+        bool confirmed = await js.InvokeAsync<bool>("confirm", "Are you sure you want to delete this contact?");
+        if (confirmed)
+        {
+            await client.DeleteAsync(baseUrl + "/api/contacts/" + ContactId);
+            NavigationManager.NavigateTo("contacts");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("contacts/edit/" + ContactId);
+        }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("contacts");
+    }
+}

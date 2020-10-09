@@ -1,0 +1,58 @@
+﻿@page "/contacts"
+@inject CustomHttpClient client
+@inject IJSRuntime js
+@inject AppSettingsService AppSettingsService
+
+<h3>Contacts</h3>
+<div class="form-group">
+    <a class="btn btn-success" href="contacts/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+<br />
+
+@if (contacts == null)
+{
+    <text>Loading...</text>
+}
+else if (contacts.Length == 0)
+{
+    <text>No Contacts Found.</text>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Birth Date</th>
+                <th>Phone Number</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Contact contact in contacts)
+            {
+                <tr>
+                    <td>@contact.LastName</td>
+                    <td>@contact.FirstName</td>
+                    <td>@contact.BirthDate.ToShortDateString()</td>
+                    <td>@contact.PhoneNumber</td>
+                    <td>
+                        <a class="btn btn-success" href="contacts/edit/@contact.Id">Edit/View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Contact[] contacts;
+    string baseUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        baseUrl = AppSettingsService.GetBaseUrl();
+        contacts = await client.GetJsonAsync<Contact[]>(baseUrl + "/api/contacts/");
+    }
+}

@@ -1,0 +1,67 @@
+﻿<EditForm Model="@contact" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <div>
+            <label>Last Name: </label>
+            <div>
+                <InputText @bind-Value="@contact.LastName" />
+                <ValidationMessage For="@(() => contact.LastName)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            <label>First Name: </label>
+            <div>
+                <InputText @bind-Value="@contact.FirstName" />
+                <ValidationMessage For="@(() => contact.FirstName)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            <label>Birth Date: </label>
+            <div>
+                <InputDate format-value="dd-MM-yyyy" @bind-Value="@contact.BirthDate" />
+                <ValidationMessage For="@(() => contact.BirthDate)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            <label>Phone Number: </label>
+            <div>
+                <InputText @bind-Value="@contact.PhoneNumber" />
+                <ValidationMessage For="@(() => contact.PhoneNumber)" />
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+    @if (ShowDelete)
+    {
+        <button class="btn btn-danger" @onclick="@Delete">Delete</button>
+    }
+
+    <button class="btn" @onclick="@Cancel">Cancel</button>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public Contact contact { get; set; }
+    [Parameter]
+    public string ButtonText { get; set; } = "Save";
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+    [Parameter]
+    public EventCallback Cancel { get; set; }
+    [Parameter]
+    public bool ShowDelete { get; set; } = false;
+    [Parameter]
+    public EventCallback Delete { get; set; }
+
+}

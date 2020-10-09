@@ -1,0 +1,31 @@
+﻿@page "/contacts/create"
+
+@inject CustomHttpClient client
+@inject NavigationManager NavigationManager
+@inject AppSettingsService AppSettingsService
+
+<h3>Add Contact</h3>
+<hr />
+
+<div class="center-it">
+    <Form ButtonText="Save" contact="@contact"
+          OnValidSubmit="@CreateContact" Cancel="@Cancel" ShowDelete="false" />
+</div>
+
+@code {
+    Contact contact = new Contact();
+    string baseUrl;
+
+    async Task CreateContact()
+    {
+        baseUrl = AppSettingsService.GetBaseUrl();
+        await client.PostJsonAsync(baseUrl + "/api/contacts/", contact);
+        NavigationManager.NavigateTo("contacts");
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("contacts");
+    }
+
+}
